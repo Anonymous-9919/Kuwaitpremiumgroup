@@ -1,0 +1,22 @@
+.vercel/
+.playwright-mcp/
+.firecrawl/
+.env*
+*.local
+*.log
+node_modules/
+
+# Local starter/tooling folders that are not part of the static site.
+/env/
+/github/
+/nodejs/
+/supabase/
+/vercel/
+
+# Visual audit captures; production imagery lives under assets/.
+/fortezza-*.png
+/fortezza-*.jpg
+/kpg-*.png
+/kpg-*.jpg
+/reference-*.png
+/reference-*.jpg

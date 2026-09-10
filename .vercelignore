@@ -1,0 +1,14 @@
+.vercel
+.playwright-mcp
+env
+github
+nodejs
+supabase
+vercel
+*.log
+/fortezza-*.png
+/fortezza-*.jpg
+/kpg-*.png
+/kpg-*.jpg
+/reference-*.png
+/reference-*.jpg

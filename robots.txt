@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://kpgkw.vercel.app/sitemap.xml
