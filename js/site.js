@@ -25,6 +25,12 @@ const text = lang === 'ar' ? {
   ]
 };
 
+const whatsappIcon = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20.5 11.2a8.5 8.5 0 0 1-12.6 7.5L3.5 20l1.3-4.1A8.5 8.5 0 1 1 20.5 11.2Z"/><path d="M9 7.1c.2-.4.7-.5 1-.2l1.1 1.1c.3.3.3.7.1 1l-.7.8c.5 1 1.3 1.8 2.3 2.3l.8-.7c.3-.2.7-.2 1 .1l1.1 1.1c.3.3.2.8-.2 1-.7.4-1.5.6-2.3.4-3.1-.8-5.5-3.2-6.3-6.3-.2-.8 0-1.6.4-2.3Z"/></svg>';
+document.querySelectorAll('.whatsapp').forEach(link => {
+  link.innerHTML = whatsappIcon;
+  if (!link.hasAttribute('aria-label')) link.setAttribute('aria-label', lang === 'ar' ? 'تواصل مع KPG عبر واتساب' : 'Contact KPG on WhatsApp');
+});
+
 const base = lang === 'ar' ? '/ar' : '';
 const links = { home:`${base}/`, services:`${base}/services/`, projects:`${base}/projects/`, about:`${base}/about/`, gallery:`${base}/gallery/`, contact:`${base}/contact/`, blog:`${base}/blog/` };
 const currentPath = location.pathname.endsWith('/') ? location.pathname : `${location.pathname}/`;
@@ -368,3 +374,33 @@ if (footer) {
     event.currentTarget.reset();
   });
 }
+
+function normalizeLinkArrows() {
+  document.querySelectorAll('i,span,b').forEach(icon => {
+    if (icon.textContent.trim() !== '↗') return;
+    icon.classList.add('link-arrow');
+    icon.setAttribute('aria-hidden', 'true');
+  });
+
+  document.querySelectorAll('a,button').forEach(control => {
+    [...control.childNodes].forEach(node => {
+      if (node.nodeType !== Node.TEXT_NODE || !node.nodeValue.includes('↗')) return;
+      const parts = node.nodeValue.split('↗');
+      const fragment = document.createDocumentFragment();
+      parts.forEach((part, index) => {
+        fragment.append(part);
+        if (index < parts.length - 1) {
+          const icon = document.createElement('span');
+          icon.className = 'link-arrow';
+          icon.setAttribute('aria-hidden', 'true');
+          icon.textContent = '↗';
+          fragment.append(icon);
+        }
+      });
+      node.replaceWith(fragment);
+    });
+  });
+}
+
+if (document.readyState === 'complete') normalizeLinkArrows();
+else document.addEventListener('DOMContentLoaded', normalizeLinkArrows, { once:true });

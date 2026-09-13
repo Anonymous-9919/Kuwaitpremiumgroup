@@ -116,6 +116,7 @@ details p { max-width:720px; margin:18px 0 3px; color:var(--muted); }
 .gallery { columns:3 260px; gap:15px; margin-top:48px; }
 .gallery img { width:100%; margin-bottom:15px; break-inside:avoid; filter:saturate(.86); }
 .whatsapp { position:fixed; z-index:8; right:22px; bottom:22px; display:grid; place-items:center; width:55px; height:55px; border-radius:50%; background:var(--gold); color:var(--ink); box-shadow:0 10px 30px rgba(0,0,0,.28); font-weight:800; }
+.whatsapp svg { width:27px; height:27px; fill:none; stroke:currentColor; stroke-linecap:round; stroke-linejoin:round; stroke-width:1.8; }
 [dir='rtl'] body { font-family:'Noto Kufi Arabic',var(--sans); }
 [dir='rtl'] h1,[dir='rtl'] h2,[dir='rtl'] .project-meta h3 { font-family:'Noto Kufi Arabic',var(--sans); letter-spacing:-.05em; line-height:1.25; }
 [dir='rtl'] .eyebrow { letter-spacing:0; }
@@ -486,6 +487,10 @@ details p { max-width:720px; margin:18px 0 3px; color:var(--muted); }
   .reference-drawer__search { position:absolute; top:-50px; right:78px; display:grid; place-items:center; width:30px; min-height:30px; padding:0; border:0; background:none; color:#fff; font-size:0; }
   .reference-drawer__search span { font-size:20px; }
   .reference-drawer nav > .reference-drawer__language { position:absolute; top:-50px; right:55px; display:grid; place-items:center; width:20px; min-height:30px; height:30px; padding:0; border:0; color:#fff; font:600 14px/30px 'Golos Text'; }
+  .link-arrow { position:relative; display:inline-grid !important; place-items:center; width:28px !important; min-width:28px; height:28px !important; border:0 !important; border-radius:50% !important; background:var(--logo-yellow) !important; color:transparent !important; -webkit-text-fill-color:transparent !important; font-size:0 !important; line-height:1 !important; text-shadow:none !important; vertical-align:middle; }
+  .link-arrow::before,.link-arrow::after { content:''; position:absolute; display:block; background:#fff; }
+  .link-arrow::before { top:7px; left:12px; width:8px; height:8px; border-top:2px solid #fff; border-right:2px solid #fff; background:none; }
+  .link-arrow::after { top:19px; left:7px; width:16px; height:2px; transform:rotate(-45deg); transform-origin:left center; }
   .hx-wide { width:calc(100% - 30px); }
   .home-exact .reference-hero { height:auto; min-height:0; aspect-ratio:480/600; }
   .home-exact .reference-hero__content { top:50%; width:95%; transform:translate(-50%,-50%); }
