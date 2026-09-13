@@ -1,18 +1,26 @@
 const lang = document.documentElement.lang === 'ar' ? 'ar' : 'en';
 document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
 
+if (!document.querySelector('link[rel="icon"]')) {
+  const favicon = document.createElement('link');
+  favicon.rel = 'icon';
+  favicon.type = 'image/svg+xml';
+  favicon.href = '/assets/images/kpg-mark.svg';
+  document.head.append(favicon);
+}
+
 const text = lang === 'ar' ? {
-  home:'الرئيسية', services:'خدماتنا', product:'القدرات', projects:'مشاريعنا', about:'عن KPG', gallery:'المعرض', blog:'المجلة', contact:'تواصل معنا', quote:'اطلب عرضاً', phone:'+965 5122 6096',
+  home:'الرئيسية', services:'خدماتنا', product:'المنتجات', projects:'مشاريعنا', about:'عن KPG', gallery:'المعرض', blog:'المدونة', contact:'تواصل معنا', quote:'اطلب عرضاً', phone:'+965 5122 6096',
   statement:'نصنع مساحات متقنة، خالدة وملهمة.', menu:'القائمة الرئيسية', close:'إغلاق', search:'بحث', searchTitle:'ابحث في KPG', searchPlaceholder:'ابحث عن خدمة أو صفحة', noResults:'لا توجد نتائج مطابقة.', info:'معلومات KPG', language:'EN', privacy:'الخصوصية', terms:'الشروط', rights:'جميع الحقوق محفوظة.', hero:[
     ['شريك موثوق في التنفيذ','التصميم الداخلي والتشطيبات والإنشاءات تحت سقف واحد','تقدّم KPG حلولاً متكاملة للمشاريع السكنية والتجارية والضيافة في الكويت.'],
-    ['مجموعة الكويت بريميوم','فن المساحات المدروسة','نحوّل الرؤية إلى مساحات عملية ومميزة، من الفكرة حتى التسليم.'],
+    ['مجموعة الكويت بريميوم','فن التصميم الداخلي المذهل','نحوّل الرؤية إلى مساحات عملية ومميزة، من الفكرة حتى التسليم.'],
     ['تفاصيل تصنع الفرق','نبني مساحات أفضل','حلول دقيقة تجمع الحرفية والتنسيق الفني والتنفيذ المنضبط.']
   ]
 } : {
-  home:'Home', services:'Services', product:'Capabilities', projects:'Projects', about:'About', gallery:'Gallery', blog:'Journal', contact:'Contact Us', quote:'Get a Quote!', phone:'+965 5122 6096',
+  home:'Home', services:'Services', product:'Product', projects:'Projects', about:'About', gallery:'Gallery', blog:'Blog', contact:'Contact us', quote:'Get A Quote!', phone:'+965 5122 6096',
   statement:'We shape interiors, crafting timeless and inspiring spaces.', menu:'Main menu', close:'Close menu', search:'Search', searchTitle:'Search KPG', searchPlaceholder:'Search services or pages', noResults:'No matching results.', info:'KPG information', language:'ع', privacy:'Privacy', terms:'Terms', rights:'All rights reserved.', hero:[
     ['Trusted delivery partner','Interior fitout, joinery & construction under one roof','KPG delivers coordinated interiors, fitout and construction for residential, commercial and hospitality projects in Kuwait.'],
-    ['Kuwait Premium Group','The art of considered interiors','We turn a clear vision into spaces that work beautifully, from the first concept to final handover.'],
+    ['Kuwait Premium Group','The Art of Stunning Interior Design','We turn a clear vision into spaces that work beautifully, from the first concept to final handover.'],
     ['Details make the difference','Built for better spaces','Precise solutions that bring together craft, technical coordination and disciplined execution.']
   ]
 };
@@ -21,10 +29,13 @@ const base = lang === 'ar' ? '/ar' : '';
 const links = { home:`${base}/`, services:`${base}/services/`, projects:`${base}/projects/`, about:`${base}/about/`, gallery:`${base}/gallery/`, contact:`${base}/contact/`, blog:`${base}/blog/` };
 const currentPath = location.pathname.endsWith('/') ? location.pathname : `${location.pathname}/`;
 const alternatePath = lang === 'ar' ? currentPath.replace(/^\/ar(?=\/|$)/, '') || '/' : `/ar${currentPath}`;
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const brandLockup = () => '<span class="reference-brand-lockup"><img src="/assets/images/kpg-mark.svg" alt=""></span>';
 const serviceItems = lang === 'ar'
   ? [
       { label:'التصميم الداخلي', slug:'interior-design' },
       { label:'أعمال التشطيبات', slug:'fitout' },
+      { label:'أعمال النجارة والتصنيع المخصص', slug:'fitout' },
       { label:'استشارات التصميم', slug:'consultation' },
       { label:'الأعمال الإنشائية', slug:'construction' },
       { label:'الصيانة والتجديد', slug:'renovation' },
@@ -33,28 +44,43 @@ const serviceItems = lang === 'ar'
   : [
       { label:'Interior design', slug:'interior-design' },
       { label:'Fitout works', slug:'fitout' },
+      { label:'Bespoke joinery and custom fabrication', slug:'fitout' },
       { label:'Design consultation', slug:'consultation' },
       { label:'Construction works', slug:'construction' },
       { label:'Maintenance & refurbishment', slug:'renovation' },
       { label:'2D & 3D visualization', slug:'visualization' }
     ];
 
+const productItems = [
+  { label:lang === 'ar' ? 'معرض التصاميم' : 'Interior gallery', url:links.gallery },
+  { label:lang === 'ar' ? 'محفظة المشاريع' : 'Project portfolio', url:links.projects },
+  { label:lang === 'ar' ? 'اختيارات المواد' : 'Material selections', url:`${base}/services/interior-design/` },
+  { label:lang === 'ar' ? 'الحلول المخصصة' : 'Bespoke solutions', url:`${base}/services/fitout/` }
+];
+const isCurrent = href => href === links.home ? currentPath === href : currentPath.startsWith(href);
+const navLink = (href, label) => `<a${isCurrent(href) ? ' class="is-active"' : ''} href="${href}"><span class="reference-menu-title">${label}</span></a>`;
+const searchIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>';
+const phoneIcon = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.4 3.5 10 7.8 8.2 10a14.5 14.5 0 0 0 5.8 5.8l2.2-1.8 4.3 2.6-.7 3.1c-.2.8-.9 1.3-1.7 1.3A15.1 15.1 0 0 1 3 5.9c0-.8.5-1.5 1.3-1.7l3.1-.7Z"></path></svg>';
+
 function headerMarkup() {
-  const logo = `<a class="reference-logo" href="${links.home}" aria-label="Kuwait Premium Group"><img src="/Logo.jpg" alt="KPG"><span>Kuwait Premium<br>Group</span></a>`;
-  const services = `<span class="reference-menu-parent"><a href="${links.services}">${text.services}</a><button aria-label="${text.services}">+</button><span class="reference-dropdown">${serviceItems.map(item => `<a href="${base}/services/${item.slug}/">${item.label}</a>`).join('')}</span></span>`;
-  const language = `<a class="reference-lang" href="${alternatePath}" lang="${lang === 'ar' ? 'en' : 'ar'}" hreflang="${lang === 'ar' ? 'en' : 'ar'}">${text.language}</a>`;
-  if (document.body.classList.contains('inner-exact')) return `<div class="reference-header reference-header--inner">${logo}<nav class="reference-nav" aria-label="Primary"><a href="${links.home}">${text.home}</a>${services}<a href="${links.gallery}">${text.product}</a><a href="${links.about}">${text.about}</a><a href="${links.blog}">${text.blog}</a><a href="${links.contact}">${text.contact}</a></nav><div class="reference-header__inner-actions"><a class="reference-phone" href="tel:+96551226096"><small>${lang === 'ar' ? 'اتصل بنا' : 'Call Us Phone'}</small>${text.phone}</a>${language}<a class="reference-quote" href="${links.contact}">${text.quote}</a><button class="reference-round reference-search" data-search-open aria-label="${text.search}">⌕</button><button class="reference-round" data-info-open aria-label="${text.info}">+</button></div><button class="reference-mobile-toggle" data-menu-toggle aria-label="${text.menu}" aria-expanded="false"><i></i><i></i><i></i></button></div>`;
-  return `<div class="reference-header"><div class="reference-header__utility"><button class="reference-round" data-info-open aria-label="${text.info}">i</button><a class="reference-phone" href="tel:+96551226096">${text.phone}</a>${language}</div><nav class="reference-nav reference-nav--left" aria-label="Primary"><a href="${links.home}">${text.home}</a>${services}<a href="${links.gallery}">${text.product}</a></nav>${logo}<nav class="reference-nav reference-nav--right" aria-label="Primary"><a href="${links.projects}">${text.projects}</a><a href="${links.about}">${text.about}</a><a href="${links.blog}">${text.blog}</a><a href="${links.contact}">${text.contact}</a></nav><div class="reference-header__actions"><a class="reference-quote" href="${links.contact}">${text.quote}</a><button class="reference-round reference-search" data-search-open aria-label="${text.search}">⌕</button><button class="reference-round" data-info-open aria-label="${text.info}">+</button></div><button class="reference-mobile-toggle" data-menu-toggle aria-label="${text.menu}" aria-expanded="false"><i></i><i></i><i></i></button></div>`;
+  const logo = `<a class="reference-logo" href="${links.home}" aria-label="Kuwait Premium Group">${brandLockup()}</a>`;
+  const services = `<span class="reference-menu-parent"><a${isCurrent(links.services) ? ' class="is-active"' : ''} href="${links.services}"><span class="reference-menu-title">${text.services}</span><i class="reference-menu-arrow" aria-hidden="true"></i></a><span class="reference-dropdown">${serviceItems.map(item => `<a href="${base}/services/${item.slug}/"><span class="reference-menu-title">${item.label}</span></a>`).join('')}</span></span>`;
+  const product = `<span class="reference-menu-parent"><a${isCurrent(links.gallery) ? ' class="is-active"' : ''} href="${links.gallery}"><span class="reference-menu-title">${text.product}</span><i class="reference-menu-arrow" aria-hidden="true"></i></a><span class="reference-dropdown">${productItems.map(item => `<a href="${item.url}"><span class="reference-menu-title">${item.label}</span></a>`).join('')}</span></span>`;
+  const language = `<a class="reference-lang" href="${alternatePath}" lang="${lang === 'ar' ? 'en' : 'ar'}" hreflang="${lang === 'ar' ? 'en' : 'ar'}" aria-label="${lang === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'}">${text.language}</a>`;
+  if (document.body.classList.contains('inner-exact')) return `<div class="reference-header reference-header--inner">${logo}<nav class="reference-nav" aria-label="Primary">${navLink(links.home, text.home)}${services}${product}${navLink(links.about, text.about)}${navLink(links.blog, text.blog)}${navLink(links.contact, text.contact)}</nav><div class="reference-header__inner-actions"><a class="reference-phone reference-phone--inner" href="tel:+96551226096"><small>${lang === 'ar' ? 'اتصل بنا' : 'Call Us Phone'}</small>${text.phone}</a>${language}<a class="reference-quote" href="${links.contact}"><span>${text.quote}</span></a><button class="reference-round reference-search" data-search-open aria-label="${text.search}">${searchIcon}</button><button class="reference-round reference-info-button" data-info-open aria-label="${text.info}"><i></i><i></i><i></i><i></i></button></div><button class="reference-mobile-toggle" data-menu-toggle aria-label="${text.menu}" aria-expanded="false"><i></i><i></i><i></i></button></div>`;
+  return `<div class="reference-header"><div class="reference-header__utility"><button class="reference-round reference-search" data-search-open aria-label="${text.search}">${searchIcon}</button>${language}<a class="reference-phone" href="tel:+96551226096">${phoneIcon}<span>${lang === 'ar' ? 'اتصل بنا: ' : 'Call Us: '}<b>${text.phone}</b></span></a></div><nav class="reference-nav reference-nav--left" aria-label="Primary">${navLink(links.home, text.home)}${services}${product}</nav>${logo}<nav class="reference-nav reference-nav--right" aria-label="Primary">${navLink(links.projects, text.projects)}${navLink(links.about, text.about)}${navLink(links.blog, text.blog)}${navLink(links.contact, text.contact)}</nav><div class="reference-header__actions"><a class="reference-quote" href="${links.contact}"><span>${text.quote}</span></a><button class="reference-round reference-info-button" data-info-open aria-label="${text.info}"><i></i><i></i><i></i><i></i></button></div><button class="reference-mobile-toggle" data-menu-toggle aria-label="${text.menu}" aria-expanded="false"><i></i><i></i><i></i></button></div>`;
 }
 
 function drawerMarkup() {
-  const items = `<a href="${links.home}">${text.home}</a><div class="reference-drawer__expand"><button aria-expanded="false">${text.services}<span>+</span></button><div>${serviceItems.map(item => `<a href="${base}/services/${item.slug}/">${item.label}</a>`).join('')}</div></div><div class="reference-drawer__expand"><button aria-expanded="false">${text.product}<span>+</span></button><div><a href="${links.gallery}">${text.gallery}</a><a href="${links.projects}">${text.projects}</a></div></div><a href="${links.about}">${text.about}</a><a href="${links.blog}">${text.blog}</a><a href="${links.contact}">${text.contact}</a><button class="reference-drawer__search" data-search-open>${text.search}<span>⌕</span></button><a class="reference-drawer__language" href="${alternatePath}" lang="${lang === 'ar' ? 'en' : 'ar'}">${text.language}</a>`;
+  const items = `<a href="${links.home}">${text.home}</a><div class="reference-drawer__expand"><button aria-expanded="false">${text.services}<span>+</span></button><div>${serviceItems.map(item => `<a href="${base}/services/${item.slug}/">${item.label}</a>`).join('')}</div></div><div class="reference-drawer__expand"><button aria-expanded="false">${text.product}<span>+</span></button><div>${productItems.map(item => `<a href="${item.url}">${item.label}</a>`).join('')}</div></div><a href="${links.about}">${text.about}</a><a href="${links.blog}">${text.blog}</a><a href="${links.contact}">${text.contact}</a><button class="reference-drawer__search" data-search-open>${text.search}<span>⌕</span></button><a class="reference-drawer__language" href="${alternatePath}" lang="${lang === 'ar' ? 'en' : 'ar'}">${text.language}</a>`;
   return `<div class="reference-overlay" data-menu-close></div><aside class="reference-drawer" data-mobile-nav aria-hidden="true"><button class="reference-drawer__close" data-menu-close aria-label="${text.close}">×</button><div class="reference-drawer__tab">${text.menu}</div><nav>${items}</nav></aside>`;
 }
 
 function infoMarkup() {
   const gallery = ['gallery-8','gallery-9','gallery-5','gallery-6','gallery-1','gallery-11'];
-  return `<div class="reference-info-overlay" data-info-close></div><aside class="reference-info" aria-hidden="true"><button class="reference-info__close" data-info-close aria-label="${text.close}">×</button><img src="/Logo.jpg" alt="KPG"><h2>${text.statement}</h2><div class="reference-info__gallery">${gallery.map(name => `<img src="/assets/images/reference/${name}.jpg" alt="KPG interior gallery">`).join('')}</div><p>Kuwait</p><a dir="ltr" href="tel:+96551226096">+965 5122 6096</a><a href="https://www.instagram.com/kpg.fitout/">@kpg.fitout</a></aside>`;
+  const imageLabel = lang === 'ar' ? 'صورة من معرض KPG الداخلي' : 'KPG interior gallery image';
+  const closeImage = lang === 'ar' ? 'إغلاق الصورة' : 'Close image';
+  return `<div class="reference-info-overlay" data-info-close></div><aside class="reference-info" aria-hidden="true"><button class="reference-info__close" data-info-close aria-label="${text.close}">×</button><a class="reference-info__logo" href="${links.home}" aria-label="Kuwait Premium Group">${brandLockup()}</a><h2>${text.statement}</h2><div class="reference-info__gallery">${gallery.map(name => `<button type="button" data-image-open data-image-src="/assets/images/reference/${name}.jpg" data-image-alt="${imageLabel}"><img src="/assets/images/reference/${name}.jpg" alt="${imageLabel}"></button>`).join('')}</div><p>Kuwait</p><a dir="ltr" href="tel:+96551226096">+965 5122 6096</a><a href="https://www.instagram.com/kpg.fitout/">@kpg.fitout</a></aside><section class="reference-image-lightbox" data-image-lightbox aria-hidden="true" aria-label="${imageLabel}"><button class="reference-image-lightbox__backdrop" data-image-close aria-label="${closeImage}"></button><div class="reference-image-lightbox__content"><button class="reference-image-lightbox__close" data-image-close aria-label="${closeImage}">×</button><img alt=""></div></section>`;
 }
 
 function searchMarkup() {
@@ -77,6 +103,77 @@ header.innerHTML = headerMarkup();
 document.querySelectorAll('.mobile-nav').forEach(node => node.remove());
 document.body.insertAdjacentHTML('afterbegin', `${drawerMarkup()}${infoMarkup()}${searchMarkup()}`);
 
+const contentImage = name => `/assets/images/content/${name}`;
+const placeholderImageRules = [
+  [/(visuali[sz]|3d|تصور)/i, 'visualization-design.jpg'],
+  [/(education|school|classroom|تعليم|مدرس)/i, 'education-interior.jpg'],
+  [/(hospitality|restaurant|f&b|ضيافة|مطعم)/i, 'hospitality-dining.jpg'],
+  [/(mep|mechanical|كهروميكانيك)/i, 'construction-detail.jpg'],
+  [/(joinery|carpentry|نجار)/i, 'interior-construction.jpg'],
+  [/(retail|store|تجزئة|متجر)/i, 'retail-interior.jpg'],
+  [/(office|workplace|corporate|commercial|مكتب|مؤسس|تجاري)/i, 'office-interior.jpg'],
+  [/(construction|programme|program|إنشاء|برنامج)/i, 'construction-detail.jpg'],
+  [/(renovat|remodel|maintenance|تجديد|صيانة)/i, 'residential-detail.jpg'],
+  [/(consult|material|mood|budget|specification|استشار|مواد|مواصف|ميزاني)/i, 'materials-moodboard.jpg'],
+  [/(light|إضاء)/i, 'interior-lighting.jpg'],
+  [/(handover|completed|تسليم|مكتمل)/i, 'residential-detail.jpg']
+];
+document.querySelectorAll('img[src*="placeholder"]').forEach(image => {
+  const context = `${image.alt} ${image.closest('a,article')?.textContent || ''}`;
+  const match = placeholderImageRules.find(([pattern]) => pattern.test(image.alt)) || placeholderImageRules.find(([pattern]) => pattern.test(context));
+  image.src = contentImage(match?.[1] || 'residential-living.jpg');
+});
+
+if (!reducedMotion) {
+  const desktopSmoothing = matchMedia('(min-width:993px)');
+  const smoothDuration = 1500;
+  let enabled = false;
+  let current = scrollY;
+  let target = current;
+  let expected = current;
+  let frame;
+  let lastFrame;
+  const maximumScroll = () => Math.max(0, document.documentElement.scrollHeight - innerHeight);
+  const stop = () => { if (frame) cancelAnimationFrame(frame); frame = undefined; };
+  const animate = time => {
+    const elapsed = Math.min(64, time - lastFrame);
+    lastFrame = time;
+    current += (target - current) * (1 - Math.pow(2, (-10 * elapsed) / smoothDuration));
+    if (Math.abs(target - current) < .2) { current = target; frame = undefined; }
+    expected = Math.round(current);
+    scrollTo(0, expected);
+    if (frame !== undefined) frame = requestAnimationFrame(animate);
+  };
+  const start = () => {
+    if (frame) return;
+    lastFrame = performance.now();
+    frame = requestAnimationFrame(animate);
+  };
+  const sync = () => {
+    enabled = desktopSmoothing.matches;
+    stop();
+    current = target = expected = scrollY;
+    document.documentElement.style.scrollBehavior = enabled ? 'auto' : '';
+  };
+  addEventListener('wheel', event => {
+    if (!enabled || event.ctrlKey || document.body.matches('.reference-menu-open,.reference-info-open,.reference-search-open')) return;
+    const delta = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? innerHeight : 1);
+    if (!delta) return;
+    const next = Math.max(0, Math.min(maximumScroll(), target + delta));
+    if (next === target) return;
+    event.preventDefault();
+    target = next;
+    start();
+  }, { passive:false });
+  addEventListener('scroll', () => {
+    if (Math.abs(scrollY - expected) > 2) { stop(); current = target = expected = scrollY; }
+  }, { passive:true });
+  addEventListener('resize', () => { target = Math.min(target, maximumScroll()); });
+  desktopSmoothing.addEventListener('change', sync);
+  addEventListener('pagehide', stop, { once:true });
+  sync();
+}
+
 const drawer = document.querySelector('[data-mobile-nav]');
 const menuToggle = document.querySelector('[data-menu-toggle]');
 function setMenu(open) { document.body.classList.toggle('reference-menu-open', open); drawer?.setAttribute('aria-hidden', String(!open)); menuToggle?.setAttribute('aria-expanded', String(open)); }
@@ -90,6 +187,19 @@ document.querySelectorAll('.reference-drawer__expand button').forEach(button => 
 function setInfo(open) { document.body.classList.toggle('reference-info-open', open); document.querySelector('.reference-info')?.setAttribute('aria-hidden', String(!open)); }
 document.querySelectorAll('[data-info-open]').forEach(button => button.addEventListener('click', () => setInfo(true)));
 document.querySelectorAll('[data-info-close]').forEach(button => button.addEventListener('click', () => setInfo(false)));
+const imageLightbox = document.querySelector('[data-image-lightbox]');
+function setImageLightbox(open, source = '', alt = '') {
+  document.body.classList.toggle('reference-image-lightbox-open', open);
+  imageLightbox?.setAttribute('aria-hidden', String(!open));
+  if (!open) return;
+  const image = imageLightbox?.querySelector('img');
+  if (image) { image.src = source; image.alt = alt; }
+}
+document.addEventListener('click', event => {
+  const trigger = event.target.closest('[data-image-open]');
+  if (trigger) { setImageLightbox(true, trigger.dataset.imageSrc, trigger.dataset.imageAlt); return; }
+  if (event.target.closest('[data-image-close]')) setImageLightbox(false);
+});
 function setSearch(open) {
   if (open) setMenu(false);
   document.body.classList.toggle('reference-search-open', open);
@@ -108,17 +218,48 @@ searchInput?.addEventListener('input', () => {
   document.querySelector('[data-search-empty]').hidden = matches !== 0;
 });
 siteSearch?.addEventListener('submit', event => { event.preventDefault(); const match = searchItems.find(item => !item.hidden); if (match) location.href = match.href; });
-document.addEventListener('keydown', event => { if (event.key === 'Escape') { setMenu(false); setInfo(false); setSearch(false); } });
+document.addEventListener('keydown', event => {
+  if (event.key !== 'Escape') return;
+  if (document.body.classList.contains('reference-image-lightbox-open')) { setImageLightbox(false); return; }
+  if (document.body.classList.contains('reference-search-open')) { setSearch(false); return; }
+  if (document.body.classList.contains('reference-info-open')) { setInfo(false); return; }
+  setMenu(false);
+});
 
 const hero = document.querySelector('.hero');
 if (hero) {
-  const images = ['h4-banner-1.jpg','h4-banner-2.jpg','pro-banner-1.jpg'];
+  const images = ['home-hero-1.png','home-hero-2.jpg'];
+  const heroSlides = text.hero.slice(0, 2);
   hero.classList.add('reference-hero');
-  hero.innerHTML = `<div class="reference-hero__slides">${text.hero.map((slide, index) => `<article class="reference-hero__slide${index === 0 ? ' is-active' : ''}" style="--hero-image:url('/assets/images/reference/${images[index]}')"><div class="reference-hero__content"><span>${slide[0]}</span><h1>${slide[1]}</h1><p>${slide[2]}</p><a href="${links.contact}" class="reference-hero__cta">${lang === 'ar' ? 'ابدأ مشروعك' : 'Start Project'} <b>↗</b></a></div></article>`).join('')}</div><div class="reference-hero__dots" aria-label="Hero slides">${text.hero.map((_, index) => `<button class="${index === 0 ? 'is-active' : ''}" data-hero-dot="${index}" aria-label="Slide ${index + 1}"></button>`).join('')}</div>`;
-  const slides = [...hero.querySelectorAll('.reference-hero__slide')]; const dots = [...hero.querySelectorAll('[data-hero-dot]')]; let active = 0; let timer;
-  const go = index => { active = (index + slides.length) % slides.length; slides.forEach((slide, i) => slide.classList.toggle('is-active', i === active)); dots.forEach((dot, i) => dot.classList.toggle('is-active', i === active)); };
-  const play = () => { clearInterval(timer); timer = setInterval(() => go(active + 1), 9000); };
-  dots.forEach((dot, index) => dot.addEventListener('click', () => { go(index); play(); })); play();
+  hero.innerHTML = `<div class="reference-hero__slides">${heroSlides.map((slide, index) => `<article class="reference-hero__slide${index === 0 ? ' is-active' : ''}" style="--hero-image:url('/assets/images/reference/${images[index]}')"><div class="reference-hero__content"><span>${slide[0]}</span><h1>${slide[1]}</h1><p>${slide[2]}</p><a href="${links.contact}" class="reference-hero__cta">${lang === 'ar' ? 'ابدأ<br>مشروعك' : 'Start<br>Project'}</a></div></article>`).join('')}</div>`;
+  const slides = [...hero.querySelectorAll('.reference-hero__slide')];
+  let active = 0;
+  let timer;
+  let transitionTimer;
+  const go = index => {
+    const next = (index + slides.length) % slides.length;
+    if (next === active) return;
+    const previous = slides[active];
+    const incoming = slides[next];
+    previous.classList.remove('is-entering');
+    previous.classList.add('is-leaving');
+    incoming.classList.remove('is-leaving');
+    incoming.classList.add('is-active','is-entering');
+    clearTimeout(transitionTimer);
+    transitionTimer = window.setTimeout(() => {
+      previous.classList.remove('is-active','is-leaving');
+      incoming.classList.remove('is-entering');
+    }, 800);
+    active = next;
+  };
+  const play = () => {
+    clearInterval(timer);
+    if (!reducedMotion) timer = setInterval(() => go(active + 1), 5000);
+  };
+  const pause = () => { clearInterval(timer); timer = undefined; };
+  hero.addEventListener('pointerenter', pause);
+  hero.addEventListener('pointerleave', play);
+  play();
 }
 
 const serviceRail = document.querySelector('.service-grid');
@@ -128,14 +269,18 @@ if (serviceRail) {
   const cardRoutes = ['fitout','fitout','fitout','interior-design','construction','fitout','fitout'];
   cards.forEach((card, index) => { if (cardRoutes[index]) card.href = `${base}/services/${cardRoutes[index]}/`; });
   const section = serviceRail.closest('.hx-services, .section');
+  const viewport = serviceRail.closest('.service-viewport');
   section?.classList.add('reference-services-section');
+  const clip = document.createElement('div');
+  clip.className = 'reference-service-clip';
+  viewport?.insertBefore(clip, serviceRail);
+  clip.append(serviceRail);
   const controls = document.createElement('div');
   controls.className = 'reference-service-controls';
   controls.innerHTML = `<button aria-label="Previous services">←</button><button aria-label="Next services">→</button><div>${cards.map((_, index) => `<i data-service-dot="${index}"></i>`).join('')}</div>`;
-  section?.append(controls);
+  viewport?.append(controls);
   let active = 0; let timer;
-  const visible = () => innerWidth >= 1024 ? 2 : 1;
-  const render = () => { const width = cards[0]?.getBoundingClientRect().width || 360; const gap = 30; serviceRail.style.transform = `translateX(${-active * (width + gap)}px)`; controls.querySelectorAll('[data-service-dot]').forEach((dot, index) => dot.classList.toggle('is-active', index === active)); };
+  const render = () => { const width = cards[0]?.getBoundingClientRect().width || 360; serviceRail.style.transform = `translate3d(${-active * (width + 24)}px,0,0)`; controls.querySelectorAll('[data-service-dot]').forEach((dot, index) => dot.classList.toggle('is-active', index === active)); };
   const go = next => { active = (next + cards.length) % cards.length; render(); };
   controls.querySelector('button:first-child')?.addEventListener('click', () => { go(active - 1); reset(); });
   controls.querySelector('button:nth-child(2)')?.addEventListener('click', () => { go(active + 1); reset(); });
@@ -182,7 +327,6 @@ document.querySelectorAll('[data-exclusive-details]').forEach(group => group.que
   group.querySelectorAll('details').forEach(other => { if (other !== item) other.open = false; });
 })));
 
-const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 if (!reducedMotion && 'IntersectionObserver' in window) {
   const observer = new IntersectionObserver(entries => entries.forEach(entry => {
     if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer.unobserve(entry.target); }
@@ -190,14 +334,21 @@ if (!reducedMotion && 'IntersectionObserver' in window) {
   document.querySelectorAll('[data-reveal]').forEach(element => observer.observe(element));
 } else document.querySelectorAll('[data-reveal]').forEach(element => element.classList.add('is-visible'));
 
-const parallaxItems = [...document.querySelectorAll('[data-parallax]')];
+const parallaxItems = [...document.querySelectorAll('[data-parallax-x],[data-parallax-y]')];
 if (!reducedMotion && parallaxItems.length) {
   let ticking = false;
   const updateParallax = () => {
-    parallaxItems.forEach(element => { const rect=element.getBoundingClientRect(); const progress=(rect.top + rect.height / 2 - innerHeight / 2) / innerHeight; element.style.setProperty('--parallax-y', `${Math.max(-1,Math.min(1,progress)) * Number(element.dataset.parallax)}px`); });
+    parallaxItems.forEach(element => {
+      const disabled = element.hasAttribute('data-parallax-desktop') && innerWidth <= 767;
+      const rect = element.getBoundingClientRect();
+      const progress = disabled ? 0 : Math.max(-1, Math.min(1, (innerHeight / 2 - rect.top - rect.height / 2) / innerHeight));
+      element.style.setProperty('--parallax-x', `${progress * Number(element.dataset.parallaxX || 0)}px`);
+      element.style.setProperty('--parallax-y', `${progress * Number(element.dataset.parallaxY || 0)}px`);
+    });
     ticking = false;
   };
   addEventListener('scroll', () => { if (!ticking) { requestAnimationFrame(updateParallax); ticking=true; } }, { passive:true });
+  addEventListener('resize', updateParallax);
   updateParallax();
 }
 
@@ -208,7 +359,7 @@ document.querySelectorAll('main img').forEach(image => { image.loading = 'lazy';
 const footer = document.querySelector('.site-footer');
 if (footer) {
   const newsletter = document.body.classList.contains('no-newsletter') ? '' : `<section class="reference-newsletter"><div><span>${lang === 'ar' ? 'ابقَ على اطلاع' : 'Stay up to date'}</span><h2>${lang === 'ar' ? 'انضم إلى نشرتنا وابقَ على اطلاع' : 'Join our newsletter stay up to date'}</h2><p>${lang === 'ar' ? 'تابع آخر الأفكار والمشاريع والمحتوى المتعلق بالتصميم الداخلي والتشطيبات.' : 'Join our newsletter. Learn something new, gain access to exclusive content, and stay informed with the latest updates in the industry.'}</p><form data-newsletter-form><input type="email" required aria-label="Email address" placeholder="${lang === 'ar' ? 'البريد الإلكتروني' : 'Email address..'}"><button aria-label="Submit">→</button></form><p class="reference-newsletter__note" data-newsletter-note role="status" hidden></p></div></section>`;
-  footer.innerHTML = `${newsletter}<section class="reference-footer"><div class="reference-footer__grid"><div><img src="/Logo.jpg" alt="KPG"><h2>${text.statement}</h2></div><div><b>${lang === 'ar' ? 'التنقل' : 'Navigation'}</b><a href="${links.home}">${text.home}</a><a href="${links.services}">${text.services}</a><a href="${links.projects}">${text.projects}</a><a href="${links.about}">${text.about}</a></div><div><b>${lang === 'ar' ? 'الخدمات' : 'Services'}</b>${serviceItems.slice(0,5).map(item => `<a href="${base}/services/${item.slug}/">${item.label}</a>`).join('')}</div><div><b>${lang === 'ar' ? 'تواصل معنا' : 'Contact'}</b><p>${lang === 'ar' ? 'الكويت' : 'Kuwait'}</p><a dir="ltr" href="tel:+96551226096">+965 5122 6096</a><a href="https://www.instagram.com/kpg.fitout/">@kpg.fitout</a></div></div><div class="reference-footer__bottom"><span>© 2026 Kuwait Premium Group. ${text.rights}</span><span><a href="${base}/privacy/">${text.privacy}</a><a href="${base}/terms/">${text.terms}</a></span></div></section>`;
+  footer.innerHTML = `${newsletter}<section class="reference-footer"><div class="reference-footer__grid"><div><a class="reference-footer__logo" href="${links.home}" aria-label="Kuwait Premium Group">${brandLockup()}</a><h2>${text.statement}</h2></div><div><b>${lang === 'ar' ? 'التنقل' : 'Navigation'}</b><a href="${links.home}">${text.home}</a><a href="${links.services}">${text.services}</a><a href="${links.projects}">${text.projects}</a><a href="${links.about}">${text.about}</a></div><div><b>${lang === 'ar' ? 'الخدمات' : 'Services'}</b>${serviceItems.slice(0,5).map(item => `<a href="${base}/services/${item.slug}/">${item.label}</a>`).join('')}</div><div><b>${lang === 'ar' ? 'تواصل معنا' : 'Contact'}</b><p>${lang === 'ar' ? 'الكويت' : 'Kuwait'}</p><a dir="ltr" href="tel:+96551226096">+965 5122 6096</a><a href="https://www.instagram.com/kpg.fitout/">@kpg.fitout</a></div></div><div class="reference-footer__bottom"><span>© 2026 Kuwait Premium Group. ${text.rights}</span><span><a href="${base}/privacy/">${text.privacy}</a><a href="${base}/terms/">${text.terms}</a></span></div></section>`;
   footer.querySelector('[data-newsletter-form]')?.addEventListener('submit', event => {
     event.preventDefault();
     const note = footer.querySelector('[data-newsletter-note]');

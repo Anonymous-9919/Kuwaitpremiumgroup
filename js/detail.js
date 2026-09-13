@@ -124,6 +124,21 @@
     }
   };
 
+  const serviceMedia = {
+    'interior-design': ['residential-living.jpg','materials-moodboard.jpg'],
+    fitout: ['office-interior.jpg','interior-construction.jpg'],
+    consultation: ['materials-moodboard.jpg','/assets/images/reference/h3-banner-8.png'],
+    construction: ['interior-construction.jpg','construction-detail.jpg'],
+    renovation: ['construction-detail.jpg','residential-detail.jpg'],
+    visualization: ['visualization-design.jpg','/assets/images/reference/h3-banner-8.png']
+  };
+  const projectMedia = {
+    'corporate-workspace': ['office-interior.jpg','office-collaboration.jpg','materials-moodboard.jpg','interior-lighting.jpg','construction-detail.jpg'],
+    'private-residence': ['residential-living.jpg','residential-detail.jpg','materials-moodboard.jpg','/assets/images/reference/h3-banner-8.png','interior-lighting.jpg'],
+    'retail-concept': ['retail-interior.jpg','retail-mall.jpg','hospitality-dining.jpg','architectural-lighting.jpg','interior-construction.jpg']
+  };
+  const mediaSource = name => name.startsWith('/') ? name : `/assets/images/content/${name}`;
+
   const labels = isArabic ? {
     home:'الرئيسية', services:'الخدمات', projects:'المشاريع', service:'تفاصيل الخدمة', project:'تفاصيل المشروع', benefits:'القيمة التي نقدمها', included:'ما تتضمنه الخدمة', suitable:'مناسبة لـ', faq:'الأسئلة الشائعة', help:'هل تحتاج إلى مساعدة؟', call:'تحدث مع KPG', details:'تفاصيل التصميم', result:'النتيجة', location:'الموقع', year:'السنة', category:'النوع', scope:'النطاق', more:'مشاريع أخرى', quote:'ابدأ مشروعك'
   } : {
@@ -132,12 +147,13 @@
 
   function renderService(item) {
     const navigation = Object.entries(services[locale]).map(([slug, service]) => `<a class="${slug === key ? 'is-active' : ''}" href="${pathBase}/services/${slug}/">${service.title}</a>`).join('');
+    const media = serviceMedia[key];
     root.innerHTML = `
       <section class="inner-hero"><div><h1>${item.title}</h1><p><a href="${pathBase}/">${labels.home}</a><span>${isArabic ? '‹' : '›'}</span><a href="${pathBase}/services/">${labels.services}</a><span>${isArabic ? '‹' : '›'}</span>${labels.service}</p></div></section>
       <section class="sd-content"><div class="hx-wide sd-layout">
-        <aside class="sd-sidebar"><span class="sd-sidebar__title">${isArabic ? 'خدمات أخرى' : 'Other Services'}</span><nav>${navigation}</nav><div class="sd-help"><img src="/Logo.jpg" alt="KPG"><b>${labels.help}</b><a dir="ltr" href="tel:+96551226096">+965 5122 6096</a><a href="${pathBase}/contact/">${labels.call} <span>↗</span></a></div></aside>
+        <aside class="sd-sidebar"><span class="sd-sidebar__title">${isArabic ? 'خدمات أخرى' : 'Other Services'}</span><nav>${navigation}</nav><div class="sd-help"><img src="/assets/images/kpg-mark.svg" alt="KPG"><b>${labels.help}</b><a dir="ltr" href="tel:+96551226096">+965 5122 6096</a><a href="${pathBase}/contact/">${labels.call} <span>↗</span></a></div></aside>
         <article class="sd-article"><div class="hx-kicker">${item.title}</div><h2>${item.heading}</h2><p class="sd-lead">${item.intro}</p>
-          <div class="sd-images"><img src="/assets/images/reference/demo-content03.jpg" alt="KPG design planning"><img src="/assets/images/reference/demo-content04.jpg" alt="KPG design consultation"></div>
+          <div class="sd-images"><img src="${mediaSource(media[0])}" alt="${item.title}"><img src="${mediaSource(media[1])}" alt="${item.title}"></div>
           <section class="sd-benefits"><h2>${isArabic ? `حلول ${item.title} يمكن التخطيط لها بثقة` : `${item.title} Clients Can Plan Around`}</h2><ul>${item.benefits.map(benefit => `<li>${benefit}</li>`).join('')}</ul></section>
           <section class="sd-included"><div><div class="hx-kicker">${labels.included}</div><h2>${labels.included}</h2></div><ul>${item.included.map(point => `<li>${point}</li>`).join('')}</ul></section>
           <section class="sd-timeline"><h2>${isArabic ? 'الجدول الزمني المعتاد للمشروع' : 'Common Project Timelines'}</h2><ul><li>${isArabic ? 'المفهوم والاعتمادات' : 'Concept and approvals'}</li><li>${isArabic ? 'المشتريات وتجهيز الموقع' : 'Procurement and site preparation'}</li><li>${isArabic ? 'التنفيذ والفحص والتسليم' : 'Delivery, inspection and handover'}</li></ul></section>
@@ -161,12 +177,13 @@
     ];
     const stats = isArabic ? [['320م²','المساحة'],['06','مناطق رئيسية'],['04','حزم عمل'],['12','أسبوعا']] : [['320M²','Area'],['06','Key Zones'],['04','Work Packages'],['12','Weeks']];
     const modes = isArabic ? ['الصور','قبل التنفيذ','الفيديو','جولة افتراضية'] : ['Photos','Before','Video','Virtual Tours'];
+    const media = projectMedia[key];
     const relatedEntries = [...Object.entries(projects[locale]).filter(([slug]) => slug !== key), [key, item]];
-    const related = relatedEntries.map(([slug, project]) => `<a href="${pathBase}/projects/${slug}/"><img src="/assets/images/reference/placeholder.jpg" alt="${project.title}"><span>${project.category}</span><h3>${project.title}</h3><small>${isArabic ? 'الكويت' : 'Kuwait'}<br>${project.year}</small></a>`).join('');
+    const related = relatedEntries.map(([slug, project]) => `<a href="${pathBase}/projects/${slug}/"><img src="${mediaSource(projectMedia[slug][0])}" alt="${project.title}"><span>${project.category}</span><h3>${project.title}</h3><small>${isArabic ? 'الكويت' : 'Kuwait'}<br>${project.year}</small></a>`).join('');
     root.innerHTML = `
       <section class="project-detail-hero"><p><a href="${pathBase}/">${labels.home}</a><span>${isArabic ? '‹' : '›'}</span><a href="${pathBase}/projects/">${labels.projects}</a></p></section>
-      <article class="pd-content"><section class="pd-overview"><div class="hx-wide"><h1>${item.title}</h1><div class="pd-meta"><div><span>${isArabic ? 'الاستشاري' : 'Consultant'}</span><b>KPG</b></div><div><span>${isArabic ? 'نوع المشروع' : 'Project Type'}</span><b>${item.category}</b></div><div><span>${isArabic ? 'العميل' : 'Client'}</span><b>${isArabic ? 'خاص' : 'Private'}</b></div><div><span>${isArabic ? 'المدة' : 'Terms'}</span><b>${isArabic ? '12 أسبوعا' : '12 Weeks'}</b></div><div><span>${isArabic ? 'الاستراتيجية' : 'Strategy'}</span><b>${isArabic ? 'متكاملة' : 'Integrated'}</b></div><div><span>${labels.year}</span><b>${item.year}</b></div></div><img class="pd-cover" src="/assets/images/reference/placeholder.jpg" alt="${item.title}"><section class="pd-design"><h2>${labels.details}</h2><div class="pd-design__copy"><h3>${item.heading}</h3><p>${item.intro} ${isArabic ? 'تمت دراسة العلاقات بين المناطق والخامات والإضاءة لضمان تجربة مترابطة وعملية.' : 'Spatial relationships, material transitions and lighting were studied together to create a practical, coherent experience.'}</p><p><b>${labels.scope}:</b> ${item.scope}</p></div><ul class="pd-features">${featureNotes.map(([title, copy]) => `<li><b>${title}:</b> ${copy}</li>`).join('')}</ul><div class="pd-stats">${stats.map(([value, name]) => `<div><b>${value}</b><span>${name}</span></div>`).join('')}</div></section><section class="pd-outcome"><h2>${isArabic ? 'نتيجة متميزة' : 'Incredible Result'}</h2><div class="pd-outcome__copy"><p>${item.result}</p><p>${isArabic ? 'تجتمع المواد والإضاءة والتفاصيل المخصصة ضمن مساحة هادئة قابلة للاستخدام اليومي والتطور مستقبلا.' : 'Materials, lighting and bespoke details work together in a calm environment designed for daily use and future change.'}</p></div><div class="pd-modes">${modes.map((mode, index) => `<button class="${index === 0 ? 'is-active' : ''}" type="button" data-project-view="${index}">${mode}</button>`).join('')}</div></section></div></section>
-        <section class="pd-gallery"><div class="pd-gallery__track" data-project-track>${[1,2,3,4,5].map(number => `<img src="/assets/images/reference/project-detail-${number}.jpg" alt="${item.title} ${isArabic ? 'تفصيل' : 'detail'} ${number}">`).join('')}</div><div class="pd-gallery__controls"><button data-project-prev aria-label="${isArabic ? 'الصورة السابقة' : 'Previous image'}">←</button><span>01 / 05</span><button data-project-next aria-label="${isArabic ? 'الصورة التالية' : 'Next image'}">→</button></div></section>
+      <article class="pd-content"><section class="pd-overview"><div class="hx-wide"><h1>${item.title}</h1><div class="pd-meta"><div><span>${isArabic ? 'الاستشاري' : 'Consultant'}</span><b>KPG</b></div><div><span>${isArabic ? 'نوع المشروع' : 'Project Type'}</span><b>${item.category}</b></div><div><span>${isArabic ? 'العميل' : 'Client'}</span><b>${isArabic ? 'خاص' : 'Private'}</b></div><div><span>${isArabic ? 'المدة' : 'Terms'}</span><b>${isArabic ? '12 أسبوعا' : '12 Weeks'}</b></div><div><span>${isArabic ? 'الاستراتيجية' : 'Strategy'}</span><b>${isArabic ? 'متكاملة' : 'Integrated'}</b></div><div><span>${labels.year}</span><b>${item.year}</b></div></div><img class="pd-cover" src="${mediaSource(media[0])}" alt="${item.title}"><section class="pd-design"><h2>${labels.details}</h2><div class="pd-design__copy"><h3>${item.heading}</h3><p>${item.intro} ${isArabic ? 'تمت دراسة العلاقات بين المناطق والخامات والإضاءة لضمان تجربة مترابطة وعملية.' : 'Spatial relationships, material transitions and lighting were studied together to create a practical, coherent experience.'}</p><p><b>${labels.scope}:</b> ${item.scope}</p></div><ul class="pd-features">${featureNotes.map(([title, copy]) => `<li><b>${title}:</b> ${copy}</li>`).join('')}</ul><div class="pd-stats">${stats.map(([value, name]) => `<div><b>${value}</b><span>${name}</span></div>`).join('')}</div></section><section class="pd-outcome"><h2>${isArabic ? 'نتيجة متميزة' : 'Incredible Result'}</h2><div class="pd-outcome__copy"><p>${item.result}</p><p>${isArabic ? 'تجتمع المواد والإضاءة والتفاصيل المخصصة ضمن مساحة هادئة قابلة للاستخدام اليومي والتطور مستقبلا.' : 'Materials, lighting and bespoke details work together in a calm environment designed for daily use and future change.'}</p></div><div class="pd-modes">${modes.map((mode, index) => `<button class="${index === 0 ? 'is-active' : ''}" type="button" data-project-view="${index}">${mode}</button>`).join('')}</div></section></div></section>
+        <section class="pd-gallery"><div class="pd-gallery__track" data-project-track>${media.map((name, index) => `<img src="${mediaSource(name)}" alt="${item.title} ${isArabic ? 'تفصيل' : 'detail'} ${index + 1}">`).join('')}</div><div class="pd-gallery__controls"><button data-project-prev aria-label="${isArabic ? 'الصورة السابقة' : 'Previous image'}">←</button><span>01 / 05</span><button data-project-next aria-label="${isArabic ? 'الصورة التالية' : 'Next image'}">→</button></div></section>
         <section class="pd-related"><div class="hx-wide"><div class="hx-kicker">${isArabic ? 'مشاريع ذات صلة' : 'Related Projects'}</div><h2>${labels.more}</h2><div>${related}</div><a class="pd-related__quote" href="${pathBase}/contact/">${labels.quote} <span>↗</span></a></div></section>
       </article>`;
   }
